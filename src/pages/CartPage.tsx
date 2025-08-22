@@ -1,8 +1,10 @@
 import React from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
+import { CheckoutForm } from '@/components/CheckoutForm';
 import { Plus, Minus, Trash2, ArrowLeft, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
 
 export const CartPage = () => {
   const { state, removeItem, updateQuantity, clearCart } = useCart();
@@ -57,51 +59,55 @@ export const CartPage = () => {
             <div className="lg:col-span-2 space-y-4">
               {state.items.map((item) => (
                 <div 
-                  key={item.id}
-                  className="bg-card/50 rounded-2xl p-6 border border-primary/20 backdrop-blur-sm hover:bg-card/70 transition-all duration-300"
+                  key={item._id}
+                  className="bg-card/50 rounded-2xl p-4 md:p-6 border border-primary/20 backdrop-blur-sm hover:bg-card/70 transition-all duration-300"
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex flex-col sm:flex-row items-start gap-4">
                     <img 
                       src={item.image} 
                       alt={item.name} 
-                      className="w-24 h-24 object-cover rounded-xl"
+                      className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-xl mx-auto sm:mx-0"
                     />
-                    <div className="flex-1">
-                      <h3 className="font-cinzel text-xl font-bold text-foreground mb-2">{item.name}</h3>
-                      <p className="text-muted-foreground mb-4">{formatPrice(item.price)}/kg</p>
+                    <div className="flex-1 w-full">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-4">
+                        <div>
+                          <h3 className="font-cinzel text-lg sm:text-xl font-bold text-foreground mb-1">{item.name}</h3>
+                          <p className="text-muted-foreground text-sm sm:text-base">{formatPrice(item.price)}/kg</p>
+                        </div>
+                        <div className="text-right sm:text-right">
+                          <div className="font-bold text-xl sm:text-2xl text-primary">
+                            {formatPrice(item.price * item.quantity)}
+                          </div>
+                        </div>
+                      </div>
                       
                       {/* Quantity Controls */}
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center sm:justify-start gap-3">
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-10 w-10"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="h-8 w-8 sm:h-10 sm:w-10"
+                          onClick={() => updateQuantity(item._id, item.quantity - 1)}
                         >
-                          <Minus className="h-4 w-4" />
+                          <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
-                        <span className="w-12 text-center font-bold text-lg">{item.quantity}</span>
+                        <span className="w-8 sm:w-12 text-center font-bold text-base sm:text-lg">{item.quantity}</span>
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-10 w-10"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="h-8 w-8 sm:h-10 sm:w-10"
+                          onClick={() => updateQuantity(item._id, item.quantity + 1)}
                         >
-                          <Plus className="h-4 w-4" />
+                          <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
                         <Button
                           variant="destructive"
                           size="icon"
-                          className="h-10 w-10 ml-4"
-                          onClick={() => removeItem(item.id)}
+                          className="h-8 w-8 sm:h-10 sm:w-10 ml-2 sm:ml-4"
+                          onClick={() => removeItem(item._id)}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-bold text-2xl text-primary">
-                        {formatPrice(item.price * item.quantity)}
                       </div>
                     </div>
                   </div>
@@ -132,17 +138,14 @@ export const CartPage = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Button 
-                    variant="hero" 
-                    className="w-full text-lg py-3"
-                    onClick={() => {
-                      alert(`Order Total: ${formatPrice(state.total)}\nThank you for choosing Vinayak Sweets!`);
-                      clearCart();
-                      navigate('/');
-                    }}
-                  >
-                    Checkout - {formatPrice(state.total)}
-                  </Button>
+                  <CheckoutForm>
+                    <Button 
+                      variant="hero" 
+                      className="w-full text-lg py-3"
+                    >
+                      Checkout - {formatPrice(state.total)}
+                    </Button>
+                  </CheckoutForm>
                   <Button 
                     variant="outline" 
                     className="w-full"

@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Plus, ShoppingCart } from 'lucide-react';
-import { Product } from '@/contexts/CartContext';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Product } from '@/types/Product'; // ✅ Shared type
 
 interface ProductCardProps {
   product: Product;
@@ -11,10 +11,10 @@ interface ProductCardProps {
   className?: string;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ 
-  product, 
+export const ProductCard: React.FC<ProductCardProps> = ({
+  product,
   variant = 'vertical',
-  className 
+  className
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -56,23 +56,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   if (variant === 'horizontal') {
     return (
-      <div 
+      <div
         ref={cardRef}
         className={cn(baseClasses, "flex min-w-[420px] h-72")}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Image Section */}
         <div className="relative w-1/2 overflow-hidden">
-          <img 
-            src={product.image} 
+          <img
+            src={product.image}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-primary/20"></div>
         </div>
 
-        {/* Content Section */}
         <div className="flex-1 p-6 flex flex-col justify-between relative">
           <div>
             <h3 className="font-cinzel text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
@@ -105,22 +103,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   }
 
   return (
-    <div 
+    <div
       ref={cardRef}
       className={cn(baseClasses, "flex flex-col h-96")}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image Section */}
       <div className="relative h-48 overflow-hidden">
-        <img 
-          src={product.image} 
+        <img
+          src={product.image}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-        
-        {/* Add to Cart Overlay */}
+
         <div className={cn(
           "absolute inset-0 flex items-center justify-center transition-all duration-300",
           isHovered ? "opacity-100 bg-black/30" : "opacity-0"
@@ -136,7 +132,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="flex-1 p-6 flex flex-col justify-between">
         <div>
           <h3 className="font-cinzel text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">

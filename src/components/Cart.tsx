@@ -27,3 +27,33 @@ export const Cart = () => {
     </div>
   );
 };
+// import React from 'react';
+// import { ShoppingCart } from 'lucide-react';
+// import { useCart } from '@/contexts/CartContext';
+// import { Button } from '@/components/ui/button';
+// import { Badge } from '@/components/ui/badge';
+// import { CheckoutForm } from '@/components/CheckoutForm';
+
+// export const Cart = () => {
+//   const { state } = useCart();
+
+//   return (
+//     <div className="relative">
+//       <CheckoutForm>
+//         <Button
+//           variant="outline"
+//           size="icon"
+//           className="relative hover:scale-110 transition-transform duration-300"
+//         >
+//           <ShoppingCart className="h-5 w-5" />
+//           {state.itemCount > 0 && (
+//             <Badge className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-primary text-primary-foreground p-0 flex items-center justify-center text-xs font-bold animate-pulse">
+//               {state.itemCount}
+//             </Badge>
+//           )}
+//         </Button>
+//       </CheckoutForm>
+//     </div>
+//   );
+// };
+

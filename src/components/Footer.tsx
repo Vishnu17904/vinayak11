@@ -1,8 +1,12 @@
 import React from 'react';
 import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Twitter, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const Footer = () => {
+     const navigate = useNavigate();     // ✅ Use inside the component
+     const location = useLocation();
+
   const contactInfo = [
     { icon: MapPin, text: 'Vinayak misthan Bhandar Near Bus Stand Nimbi Jodha, Rajasthan' },
     { icon: Phone, text: '+91 9001007160' },
@@ -13,8 +17,8 @@ export const Footer = () => {
   const quickLinks = ['Home', 'Products', 'About Us', 'Contact', 'Order Online'];
   const categories = ['Traditional Sweets', 'Namkeens & Snacks', 'Festival Specials', 'Gift Boxes', 'Seasonal Items'];
   const socialLinks = [
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
+    { icon: Facebook, href: 'https://www.facebook.com/share/16vC23YqV4/', label: 'Facebook' },
+    { icon: Instagram, href: 'https://www.instagram.com/vinayak_misthan_namkeen_2002?igsh=MXRsa2cxZGZvazhjNQ==', label: 'Instagram' },
     { icon: Twitter, href: '#', label: 'Twitter' },
     { icon: MessageCircle, href: '#', label: 'WhatsApp' }
   ];
@@ -58,10 +62,19 @@ export const Footer = () => {
                 <button
                   key={index}
                   className="block text-foreground/70 hover:text-primary transition-colors text-left"
-                  onClick={() => {
-                    const element = document.getElementById(link.toLowerCase().replace(' ', ''));
-                    if (element) element.scrollIntoView({ behavior: 'smooth' });
+                 onClick={() => {
+                   const sectionId = link.toLowerCase().replace(/\s/g, '');
+
+                  if (location.pathname !== '/') {
+                 navigate('/', { state: { scrollTo: sectionId } });
+                   } else {
+                    const element = document.getElementById(sectionId);
+                    if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                       }
+                     }
                   }}
+
                 >
                   {link}
                 </button>
@@ -135,7 +148,7 @@ export const Footer = () => {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-primary/20 text-center">
           <p className="text-foreground/60">
-            &copy; 2025 Vinayak Sweets & Namkeens. All rights reserved. Made with ❤️ for sweet lovers.
+            &copy; 2025 Vishnu_Prajapat. All rights reserved. Made with ❤️ for sweet lovers.
           </p>
         </div>
       </div>

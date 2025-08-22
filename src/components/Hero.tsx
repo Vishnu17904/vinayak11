@@ -36,15 +36,14 @@ export const Hero = () => {
       {/* Hero Background */}
       <div className="absolute inset-0 bg-gradient-hero"></div>
       
-      {/* Ambient Light Effects */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div>
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
       </div>
 
       {/* Hero Content */}
-      <div ref={contentRef} className="relative z-10 text-center max-w-5xl mx-auto px-6 opacity-0">
-        <div className="space-y-8">
+      <div ref={contentRef} className="relative z-10 text-center max-w-5xl mx-auto px-6 pt-14">
+        <div className="space-y-8 pt-16">
           {/* Main Title */}
           <h1 className="font-cinzel text-4xl md:text-6xl lg:text-8xl font-black leading-tight">
             <span className="block bg-gradient-primary bg-clip-text text-transparent animate-glow">
