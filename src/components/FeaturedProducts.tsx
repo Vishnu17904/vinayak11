@@ -73,7 +73,7 @@ export const FeaturedProducts: React.FC = () => {
           <div className="flex gap-8 overflow-x-auto pb-8 scroll-smooth scrollbar-hide">
             {featured.map((product, index) => (
               <div
-                key={product.id}
+                key={product._id}
                 className={`transition-all duration-700 ${
                   isVisible
                     ? 'opacity-100 translate-x-0'
