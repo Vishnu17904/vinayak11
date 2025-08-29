@@ -158,17 +158,27 @@ const ProfilePage = () => {
                     </p>
                   </div>
                 ) : (
-                  <ul className="space-y-3">
-                    {orders.map((order) => (
-                      <li key={order._id} className="border p-4 rounded-md text-left">
-                        <p className="font-medium">Order ID: {order._id.slice(-6)}</p>
-                        <p className="text-sm text-muted-foreground">
-                          ₹{order.total} • {new Date(order.createdAt).toLocaleDateString()}
-                        </p>
-                        <p className="text-sm">Items: {order.items.length}</p>
-                      </li>
-                    ))}
-                  </ul>
+<ul className="space-y-3">
+  {orders.map((order) => (
+    <li key={order._id} className="border p-4 rounded-md text-left">
+      <p className="font-medium">Order ID: {order._id.slice(-6)}</p>
+      <p className="text-sm text-muted-foreground">
+        ₹{order.total} • {new Date(order.createdAt).toLocaleDateString()}
+      </p>
+      <p className="text-sm">Items: {order.items.length}</p>
+
+      {/* ✅ Show item names */}
+      <ul className="ml-4 list-disc text-sm text-muted-foreground">
+        {order.items.map((item, idx) => (
+          <li key={item.productId || `${order._id}-${idx}`}>
+            {item.name} × {item.quantity}
+          </li>
+        ))}
+      </ul>
+    </li>
+  ))}
+</ul>
+
                 )}
               </CardContent>
             </Card>

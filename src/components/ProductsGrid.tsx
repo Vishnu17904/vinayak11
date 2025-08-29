@@ -167,7 +167,7 @@ export const ProductsGrid: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProducts.map((product, index) => (
               <div
-                key={product.id || product.id}
+                key={product._id || product._id}
                 className={`transition-all duration-700 ${
                   isVisible
                     ? 'opacity-100 translate-y-0'

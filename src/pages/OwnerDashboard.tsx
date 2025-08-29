@@ -39,6 +39,7 @@ interface Order {
   status: string;
   createdAt: string;
   items: OrderItem[];
+  address: String;
 }
 
 const mockProducts = [
@@ -70,16 +71,24 @@ export default function OwnerDashboard() {
   useEffect(() => {
     fetchProducts();
     fetchOrders();
+
+   const interval = setInterval(() => {
+      fetchOrders();
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const fetchOrders = async () => {
     try {
+      setLoading(true);
       const res = await fetch("http://localhost:5000/api/orders/recent");
-      if (!res.ok) throw new Error("Failed to fetch orders");
       const data = await res.json();
       setOrders(data);
-    } catch (error) {
-      console.error("Error fetching recent orders:", error);
+    } catch (err) {
+      console.error("Failed to fetch recent orders:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -229,108 +238,140 @@ export default function OwnerDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Orders Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Orders</CardTitle>
-              <CardDescription>Latest customer orders and their status</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Order ID</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {orders.map((order) => (
-                    <TableRow key={order._id}>
-                      <TableCell className="font-medium">{order._id}</TableCell>
-                      <TableCell>{order.name}</TableCell>
-                      <TableCell>₹{order.total}</TableCell>
-                      <TableCell>
-                        <Select 
-                          value={order.status} 
-                          onValueChange={(value) => updateOrderStatus(order._id, value)}
-                        >
-                          <SelectTrigger className="w-32">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="processing">Processing</SelectItem>
-                            <SelectItem value="completed">Completed</SelectItem>
-                            <SelectItem value="cancelled">Cancelled</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" size="sm" onClick={() => setSelectedOrder(order)}>
-                              <Eye size={16} className="mr-1" />
-                              View
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-2xl">
-                            <DialogHeader>
-                              <DialogTitle>Order Details - {order._id}</DialogTitle>
-                              <DialogDescription>
-                                Complete order information and customer details
-                              </DialogDescription>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                  <h4 className="font-semibold">Customer Information</h4>
-                                  <p className="text-sm text-muted-foreground">Name: {order.name}</p>
-                                  <p className="text-sm text-muted-foreground">Email: {order.email}</p>
-                                  <p className="text-sm text-muted-foreground">Phone: {order.phone}</p>
-                                </div>
-                                <div>
-                                  <h4 className="font-semibold">Order Information</h4>
-                                  <p className="text-sm text-muted-foreground">Date: {new Date(order.createdAt).toLocaleDateString()}</p>
-                                  <p className="text-sm text-muted-foreground">Status: {order.status}</p>
-                                  <p className="text-sm text-muted-foreground">Total: ₹{order.total}</p>
-                                  <p className="text-sm text-muted-foreground">Payment: {order.paymentMethod}</p>
-                                </div>
-                              </div>
-                              <div>
-                                <h4 className="font-semibold">Order Items</h4>
-                                <Table>
-                                  <TableHeader>
-                                    <TableRow>
-                                      <TableHead>Product</TableHead>
-                                      <TableHead>Quantity</TableHead>
-                                      <TableHead>Price</TableHead>
-                                      <TableHead>Total</TableHead>
-                                    </TableRow>
-                                  </TableHeader>
-                                  <TableBody>
-                                    {order.items.map((item, index) => (
-                                      <TableRow key={index}>
-                                        <TableCell>{item.name}</TableCell>
-                                        <TableCell>{item.quantity}</TableCell>
-                                        <TableCell>₹{item.price}</TableCell>
-                                        <TableCell>₹{item.quantity * item.price}</TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                </Table>
-                              </div>
+         <Card>
+      <CardHeader>
+        <CardTitle>Recent Orders</CardTitle>
+        <CardDescription>Latest customer orders and their status</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Order ID</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Total</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {orders.map((order) => (
+              <TableRow key={order._id}>
+                <TableCell className="font-medium">{order._id}</TableCell>
+                <TableCell>{order.name}</TableCell>
+                <TableCell>₹{order.total}</TableCell>
+                <TableCell>
+                  <Select
+                    value={order.status}
+                    onValueChange={(value) =>
+                      updateOrderStatus(order._id, value)
+                    }
+                  >
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="processing">Processing</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </TableCell>
+                <TableCell>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedOrder(order)}
+                      >
+                        <Eye size={16} className="mr-1" />
+                        View
+                      </Button>
+                    </DialogTrigger>
+                    {selectedOrder && selectedOrder._id === order._id && (
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle>
+                            Order Details - {order._id}
+                          </DialogTitle>
+                          <DialogDescription>
+                            Complete order information and customer details
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <h4 className="font-semibold">
+                                Customer Information
+                              </h4>
+                              <p className="text-sm text-muted-foreground">
+                                Name: {order.name}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Email: {order.email}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Phone: {order.phone}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Phone: {order.address}
+                              </p>                              
                             </div>
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                            <div>
+                              <h4 className="font-semibold">Order Information</h4>
+                              <p className="text-sm text-muted-foreground">
+                                Date:{" "}
+                                {new Date(order.createdAt).toLocaleDateString()}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Status: {order.status}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Total: ₹{order.total}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                Payment: {order.paymentMethod}
+                              </p>
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold">Order Items</h4>
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Product</TableHead>
+                                  <TableHead>Quantity</TableHead>
+                                  <TableHead>Price</TableHead>
+                                  <TableHead>Total</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {order.items.map((item, index) => (
+                                  <TableRow key={item.productId || `${order._id}-${index}`}>
+                                    <TableCell>{item.name}</TableCell>
+                                    <TableCell>{item.quantity}</TableCell>
+                                    <TableCell>₹{item.price}</TableCell>
+                                    <TableCell>
+                                      ₹{item.quantity * item.price}
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </div>
+                      </DialogContent>
+                    )}
+                  </Dialog>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
 
           {/* Products Section */}
           <Card>

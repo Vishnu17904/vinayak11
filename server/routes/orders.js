@@ -12,15 +12,12 @@ router.post("/", async (req, res) => {
   try {
     const { name, email, phone, address, city, state, pincode, paymentMethod, items, total } = req.body;
 
-    // Basic validation
     if (!name || !address || !paymentMethod || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // --- Validation step: Check all items first ---
     for (const [idx, item] of items.entries()) {
       const idFromClient = item.productId || item._id; 
-      
       if (!idFromClient) {
         return res.status(400).json({ message: `Item ${idx} missing product id` });
       }
@@ -32,9 +29,8 @@ router.post("/", async (req, res) => {
       }
     }
 
-    // --- Transformation step: Map data for Mongoose ---
     const formattedItems = items.map((item) => ({
-      productId: item.productId || item._id, 
+      productId: item.productId || item._id,
       name: item.name,
       price: item.price,
       quantity: item.quantity,
@@ -54,42 +50,46 @@ router.post("/", async (req, res) => {
   }
 });
 
-// --- NEW CODE: Add this section to your file ---
 /**
  * @desc Get all orders for a specific user by email or phone
  * @route GET /api/orders/user-orders
- * @queryParam email, phone
  */
 router.get("/user-orders", async (req, res) => {
   try {
     const { email, phone } = req.query;
-    
-    // Check if at least one identifier is provided
     if (!email && !phone) {
       return res.status(400).json({ message: "Email or phone number is required." });
     }
 
     const query = {};
-    if (email) {
-      query.email = email;
-    }
-    if (phone) {
-      query.phone = phone;
-    }
+    if (email) query.email = email;
+    if (phone) query.phone = phone;
 
-    // Fetch orders, sort by creation date (newest first)
     const orders = await Order.find(query).sort({ createdAt: -1 }).select("total items createdAt");
-    
     res.status(200).json(orders);
   } catch (err) {
     console.error("Failed to fetch user orders:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 });
-// --- END OF NEW CODE ---
+
+/**
+ * @desc Get recent orders (for Owner Dashboard)
+ * @route GET /api/orders/recent
+ */
+router.get("/recent", async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .sort({ createdAt: -1 }) // newest first
+      .limit(10); // latest 10 orders
+    res.json(orders);
+  } catch (err) {
+    console.error("Failed to fetch recent orders:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+});
 
 export default router;
-
 
 
 
